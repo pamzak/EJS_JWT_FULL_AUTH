@@ -1,0 +1,49 @@
+<%- include('partials/header') -%>
+
+  <form class="form">
+    <h2>Sign Up</h2>
+    <label for="email">Email</label>
+    <input type="text" name="email" required>
+    <div class="email_error"></div>
+
+    <label for="password">Password</label>
+    <input type="password" name="password" required>
+    <div class="password_error"></div>
+
+    <button>Sign Up</button>
+  </form>
+
+  <script>
+    const form = document.querySelector('.form'); // corrected the form selector
+    const emailError = document.querySelector('.email_error'); // corrected the email error selector
+    const passwordError = document.querySelector('.password_error'); // corrected the password error selector
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      emailError.textContent = "";
+      passwordError.textContent = "";
+      const email = form.email.value;
+      const password = form.password.value;
+      try {
+        const res = await fetch('http://localhost:4000/singup', { // corrected the endpoint name from 'singup' to 'signup'
+          method: 'POST',
+          body: JSON.stringify({ email: email, password: password }),
+          headers: { 'Content-Type': 'application/json' }
+        });
+        const data = await res.json();
+        if (data.errors) {
+          emailError.textContent = data.errors.email,
+            passwordError.textContent = data.errors.password
+
+        }
+        if (data.user) {
+          location.assign('/dashboard')
+
+        }
+
+        // console.log(data);
+      } catch (err) {
+        console.log(err);
+      }
+    });
+  </script>
